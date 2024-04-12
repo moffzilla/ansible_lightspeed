@@ -1,0 +1,14 @@
+---
+# Ansible Playbook to upgrade Cisco IOS 
+
+- name: Upgrade CISCO IOS 
+  hosts: SWITCHES
+
+  vars: 
+    upgrade_ios_version: 12.2(55)SE12
+
+  tasks:
+ #   - name: CHECK CURRENT VERSION
+ 
+
+ #   - name: Backup my Cisco switch IOS 

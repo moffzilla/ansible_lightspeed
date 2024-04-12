@@ -1,0 +1,42 @@
+# Ansible Playbook to test VMware SD-WAN with robotframework.org
+
+- name: Create the Task to simulate traffic for each traffic type (video, voice, and transactional) with different latency values using Robot Framework test suite 
+  hosts: traffic_generator
+  become: true
+
+  vars: 
+    vmware_sase_orchestrator_version: 5.2.0
+    robotframework_org: 6.1.1
+
+  tasks:
+      
+#     - name: Set {{ Latency_value }} to 50ms for Robot Framework test suite
+       ansible.builtin.shell: /root/robotframework_test/robotframework-test.sh --set-latency-50ms
+       register: setlatency
+       changed_when: setlatency.stdout_lines[2] != "50"
+     
+      
+#     - name: Run Robot Framework test suite to generate video traffic
+       ansible.builtin.shell: /root/robotframework_test/robotframework-test.sh --test-video-options
+         --cpu-max-prime=10 --ram-max-prime=8192 --vendor-status-max-video-memory-mb=4096
+         --gui-memory-max-cell-size=128 --disable-video-mp3
+       register: runtest
+       changed_when: false
+
+#     - name: Run Robot Framework test suite to generate audio traffic
+       ansible.builtin.shell: /root/robotframework_test/robotframework-test.sh --test-audio-options
+         --cpu-max-audio-memory-mb=4096 --ram-max-audio-memory-mb=8192 --vendor-status-max-audio-memory-mb=4096
+         --gui-memory-max-cell-size=128 --disable-video-mp3
+       register: runtest
+       changed_when: false
+     
+#     - name: Reset {{ Latency_value }} to default for Robot Framework test suite
+       ansible.builtin.shell: /root/robotframework_test/robotframework-test.sh --reset-latency-audio
+       register: resetlatency
+       changed_when: resetlatency.rc == 1
+       failed_when: ('Input task completed successfully' not in restorelatency.stdout_lines[2])
+         or 'Request failed' not in restorelatency.stdout_lines[2]
+     
+         
+
+    

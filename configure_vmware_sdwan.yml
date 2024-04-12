@@ -1,0 +1,36 @@
+
+- name: Configure video latency thresholds
+  hosts: sdwan-orchestrator
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Get video latency thresholds
+      vmware_rest.vmware_rest_get:
+        url: "/vdn/latencyThresholds"
+        validate_certs: false
+        register: video_latency_thresholds
+
+    #- name: Set minimum video latency threshold to 200ms with vmware_rest
+
+   
+    #- name: Set minimum audio latency threshold to 200ms with vmware_rest
+    #- name: Set minimum video latency threshold to 200ms with vmware_rest
+    
+
+
+   
+
+  
+
+    
+ #   - name: Configure the latency threshold for each traffic type (video, voice, and transactional) to a different value using secure edge cli
+
+  
+
+    
+
+
+
+     
+

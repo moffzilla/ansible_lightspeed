@@ -1,0 +1,54 @@
+## Backup Running Config 
+
+- hosts: cisco_switches 
+  vars: 
+    upgrade_ios_version: 12.2(55)SE12
+    dest_path: ~/network-programmability/backups/
+    network_nfs: 10.10.10.10
+    firmware_file_name: c2960-lanbasek9-mz.122-55.SE12.bin 
+  tasks:
+
+## SAVE the Running Config 
+
+   - name: Collect the running config with the cisco.ios collection and save it into an Ansible variable
+     cisco.ios.ios_facts:
+       gather_subset: all
+     register: current_config
+   
+   - name: FTP copy software {{ firmware_file_name }} from {{ network_nfs }}
+     cisco.ios.ios_command:
+       commands:
+         - command: copy ftp://{{ network_nfs }}/{{ firmware_file_name }} flash:{{ firmware_file_name
+             }}
+           prompt: Destination filename \[{{ firmware_file_name }} \]
+           answer: "\r"
+     vars:
+       ansible_command_timeout: 300
+     when: current_config.ansible_facts.ansible_net_filesystems[firmware_file_name].size
+       != firmwares[firmware_file_name].size
+   
+
+   - name: Reload the Device and if prompted for confirmation answer yes
+     ansible.netcommon.cli_command:
+       command: reload
+       prompt:
+         - confirm
+       answer:
+         - y
+     when: current_config.ansible_facts.ansible_net_filesystems[firmware_file_name].size
+       != firmware_file_name
+   
+    
+   #- name: Wait for device to come back online and delegate to localhost
+    
+   #- name: Collect running version 
+    
+
+  #- name: Wait for device to come back online and delegate to localhost && Collect running version 
+
+
+
+
+
+       
+ 

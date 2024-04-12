@@ -1,0 +1,32 @@
+# Ansible Playbook to upgrade Cisco IOS 
+
+- name: Upgrade CISCO IOS 
+  hosts: ios
+
+  vars: 
+    upgrade_ios_version: 12.2(55)SE12
+
+  tasks:
+    - name: CHECK CURRENT VERSION
+      cisco.ios.ios_command:
+        commands: "{{ commands }}"
+      register: ios_version
+
+    - name: Backup CISCO IOS configuration
+      cisco.ios.ios_config:
+        backup: true
+        backup_options:
+          dir_path: "{{ backup_dir }}"
+          filename: '{{ inventory_hostname }}.txt'
+      when: ansible_network_os == "ios" and ios_version.stdout[0] != "12.2(55)SE12"
+    
+#  - name: Add a new static route 172.16.30.188 255.255.255.0 for Juniper Router in the interface GigabitEthernet0/1 
+
+
+
+#    - name: Collect backups for Cisco Routers in the ios hosts
+
+#    - name: Create a Virtual AWS ECA instance with 4 CPUs
+
+#    - name: Install postgresql-server & run postgresqul-setup command
+
